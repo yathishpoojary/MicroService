@@ -1,0 +1,7 @@
+com\learn\user\controller\UserController.class
+com\learn\user\model\User.class
+com\learn\user\service\UserService.class
+com\learn\user\kafka\UserEventProducer.class
+com\learn\user\dto\UserDTO.class
+com\learn\user\UserServiceApplication.class
+com\learn\user\repository\UserRepository.class
