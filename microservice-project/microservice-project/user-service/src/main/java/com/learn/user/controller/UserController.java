@@ -1,5 +1,6 @@
 package com.learn.user.controller;
 import com.learn.user.dto.UserDTO;
+import com.learn.user.dto.UserWithProductsResponse;
 import com.learn.user.model.User;
 import com.learn.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Aggregated endpoint: User Service calls Product Service (via Feign + Eureka)
+    // to combine this user's details with the products they own.
+    @GetMapping("/{id}/products")
+    public ResponseEntity<UserWithProductsResponse> getUserWithProducts(@PathVariable Long id) {
+        return userService.getUserWithProducts(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

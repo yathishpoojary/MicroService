@@ -20,6 +20,11 @@ public class ProductController {
         return productService.getProductById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/user/{userId}")
+    public List<Product> getProductsByUser(@PathVariable Long userId) {
+        return productService.getProductsByUserId(userId);
+    }
+
     @PostMapping
     public Product createProduct(@RequestBody ProductDTO dto) { return productService.createProduct(dto); }
 

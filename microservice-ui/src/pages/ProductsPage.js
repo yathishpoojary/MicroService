@@ -9,7 +9,7 @@ const s = {
   form: {
     background: 'var(--surface)', border: '1px solid var(--border)',
     borderRadius: 'var(--radius)', padding: '1.5rem', marginBottom: '2rem',
-    display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '1rem', alignItems: 'end',
+    display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 0.8fr auto', gap: '1rem', alignItems: 'end',
   },
   field: { display: 'flex', flexDirection: 'column', gap: '0.4rem' },
   label: { fontSize: '0.78rem', color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.8px' },
@@ -44,15 +44,15 @@ const s = {
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const { list, status } = useSelector(s => s.products);
-  const [form, setForm] = useState({ name: '', description: '', price: '' });
+  const [form, setForm] = useState({ name: '', description: '', price: '', userId: '' });
 
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.name || !form.price) return;
-    dispatch(createProduct({ ...form, price: parseFloat(form.price) }));
-    setForm({ name: '', description: '', price: '' });
+    dispatch(createProduct({ ...form, price: parseFloat(form.price), userId: form.userId ? parseInt(form.userId) : null }));
+    setForm({ name: '', description: '', price: '', userId: '' });
   };
 
   return (
@@ -78,6 +78,11 @@ export default function ProductsPage() {
           <input style={s.input} placeholder="999.99" type="number" value={form.price}
             onChange={e => setForm({ ...form, price: e.target.value })} />
         </div>
+        <div style={s.field}>
+          <label style={s.label}>User ID</label>
+          <input style={s.input} placeholder="1" type="number" value={form.userId}
+            onChange={e => setForm({ ...form, userId: e.target.value })} />
+        </div>
         <button type="submit" style={s.btn('var(--accent2)')}>+ Add Product</button>
       </form>
 
@@ -90,6 +95,7 @@ export default function ProductsPage() {
             <span style={s.badge}>#{product.id}</span>
             <div style={s.cardName}>{product.name}</div>
             <div style={s.cardDesc}>{product.description || 'No description'}</div>
+            {product.userId && <div style={{ fontSize: '0.78rem', color: 'var(--accent)' }}>Owner: User #{product.userId}</div>}
             <div style={s.cardFooter}>
               <span style={s.price}>${product.price?.toFixed(2)}</span>
               <button style={s.del} onClick={() => dispatch(deleteProduct(product.id))}>Delete</button>

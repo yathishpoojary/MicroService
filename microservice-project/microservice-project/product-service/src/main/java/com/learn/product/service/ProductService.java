@@ -13,12 +13,14 @@ public class ProductService {
 
     public List<Product> getAllProducts() { return productRepository.findAll(); }
     public Optional<Product> getProductById(Long id) { return productRepository.findById(id); }
+    public List<Product> getProductsByUserId(Long userId) { return productRepository.findByUserId(userId); }
 
     public Product createProduct(ProductDTO dto) {
         Product p = new Product();
         p.setName(dto.getName());
         p.setDescription(dto.getDescription());
         p.setPrice(dto.getPrice());
+        p.setUserId(dto.getUserId());
         return productRepository.save(p);
     }
 

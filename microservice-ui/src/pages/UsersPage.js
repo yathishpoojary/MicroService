@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers, createUser, deleteUser } from '../features/users/usersSlice';
+import { fetchUsers, createUser, deleteUser, fetchUserProducts } from '../features/users/usersSlice';
 
 const s = {
   page: { padding: '2.5rem 2rem', maxWidth: 1100, margin: '0 auto' },
@@ -33,11 +33,13 @@ const s = {
   empty: { textAlign: 'center', padding: '3rem', color: 'var(--text2)' },
   loading: { textAlign: 'center', padding: '3rem', color: 'var(--accent)', fontFamily: "'Space Mono', monospace" },
   wrap: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' },
+  link: { background: 'transparent', border: '1px solid var(--accent3)', color: 'var(--accent3)', padding: '0.3rem 0.8rem', borderRadius: 6, cursor: 'pointer', fontSize: '0.8rem', marginRight: '0.5rem' },
+  productList: { listStyle: 'none', margin: '0.4rem 0 0', padding: 0, fontSize: '0.82rem', color: 'var(--text2)' },
 };
 
 export default function UsersPage() {
   const dispatch = useDispatch();
-  const { list, status } = useSelector(s => s.users);
+  const { list, status, userProducts } = useSelector(s => s.users);
   const [form, setForm] = useState({ name: '', email: '' });
 
   useEffect(() => { dispatch(fetchUsers()); }, [dispatch]);
@@ -80,20 +82,35 @@ export default function UsersPage() {
                 <th style={s.th}>ID</th>
                 <th style={s.th}>Name</th>
                 <th style={s.th}>Email</th>
+                <th style={s.th}>Products</th>
                 <th style={s.th}>Action</th>
               </tr>
             </thead>
             <tbody>
-              {list.map(user => (
+              {list.map(user => {
+                const up = userProducts?.[user.id];
+                return (
                 <tr key={user.id}>
                   <td style={s.td}><span style={s.badge}>#{user.id}</span></td>
                   <td style={s.td}>{user.name}</td>
                   <td style={s.td}>{user.email}</td>
                   <td style={s.td}>
+                    <button style={s.link} onClick={() => dispatch(fetchUserProducts(user.id))}>
+                      {up?.status === 'loading' ? 'Loading...' : `View (${up?.status === 'succeeded' ? up.productCount : '?'})`}
+                    </button>
+                    {up?.status === 'succeeded' && (
+                      <ul style={s.productList}>
+                        {up.products.length === 0 && <li>No products</li>}
+                        {up.products.map(p => <li key={p.id}>{p.name} - ${p.price?.toFixed(2)}</li>)}
+                      </ul>
+                    )}
+                    {up?.status === 'failed' && <span style={{ color: 'var(--accent2)', fontSize: '0.8rem' }}>Failed to load</span>}
+                  </td>
+                  <td style={s.td}>
                     <button style={s.del} onClick={() => dispatch(deleteUser(user.id))}>Delete</button>
                   </td>
                 </tr>
-              ))}
+              );})}
             </tbody>
           </table>
         )}
