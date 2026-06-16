@@ -1,5 +1,6 @@
 # Microservice Learning Project
 
+
 ## Architecture
 - **Eureka Server** (port 8761) — Service Discovery
 - **API Gateway** (port 8080) — Single Entry Point
